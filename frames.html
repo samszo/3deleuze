@@ -152,7 +152,7 @@
 		<script src="js/CSS3DRenderer.js"></script>
 
 		<div id="container"></div>
-		<div id="search"><input id="query" type="text" value="liberté"><button id="button">cherche</button></div>
+		<div id="search"><input id="query" type="text" value=""><button id="button">cherche</button></div>
 
 		<script>
 
@@ -187,10 +187,17 @@
 				controls.addEventListener( 'change', render );
 
 				var button = document.getElementById( 'button' );
+				document.addEventListener('keydown', function(e) {
+					if (e.	keyCode === 13) {
+						searchDeleuze( query.value );
+						getRottenTomatoes(query.value);
+						e.preventDefault();
+					}
+				}, false);
 				button.addEventListener( 'click', function ( event ) {
 
 					searchDeleuze( query.value );
-					//getRottenTomatoes(query.value);
+					getRottenTomatoes(query.value);
 
 				}, false );
 
@@ -207,7 +214,7 @@
 
 			function searchDeleuze( query ) {
 
-				window.location.hash = query;
+//				window.location.hash = query;
 				//var url = 'http://localhost/jdc/public/deleuze/cherche?term=' + query;
 				var url = 'http://193.54.152.233/jdc/public/deleuze/cherche?term=' + query;
 				$.get(url,null, function (data) {
@@ -309,11 +316,18 @@
 				poster.className = 'blockMovie'; //Selon CSS Alexandre
 				
 				//Recupération de l'affiche du film
-				var img = document.createElement('img');
-				img.setAttribute('src', movie.poster);
-				img.setAttribute('alt', movie.titre);
-				//L'affiche dans le bloc
-				poster.appendChild(img);
+				if (movie.poster != 'http://images.rottentomatoescdn.com/images/redesign/poster_default.gif') {
+					var img = document.createElement('img');
+					img.setAttribute('src', movie.poster);
+					img.setAttribute('alt', movie.titre);
+					//L'affiche dans le bloc
+					poster.appendChild(img);
+				}
+				else {
+					var h1 = document.createElement('h1');
+					h1.innerHTML = movie.title;
+					poster.appendChild(h1);
+				}
 				return poster;
 			}
 			
