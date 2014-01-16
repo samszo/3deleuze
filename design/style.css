@@ -1,6 +1,9 @@
 *{margin: 0;
 padding: 0;
 }
+cite{
+	display: block;
+}
 
 body{
 	background-color: #0C1010;
