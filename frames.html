@@ -152,7 +152,7 @@
 		<script src="js/CSS3DRenderer.js"></script>
 
 		<div id="container"></div>
-		<div id="search"><input id="query" type="text" value="liberté"><button id="button">cherche</button></div>
+		<div id="search"><input id="query" type="text" value=""><button id="button">cherche</button></div>
 
 		<script>
 
@@ -201,13 +201,14 @@
 				}
 
 				window.addEventListener( 'resize', onWindowResize, false );
-//				search( query.value );
+
+				//search( query.value );
 				
 			}
 
 			function searchDeleuze( query ) {
 
-				window.location.hash = query;
+				//window.location.hash = query;
 				//var url = 'http://localhost/jdc/public/deleuze/cherche?term=' + query;
 				var url = 'http://193.54.152.233/jdc/public/deleuze/cherche?term=' + query;
 				$.get(url,null, function (data) {
@@ -290,15 +291,22 @@
 				element.className = 'element';
 				element.style.backgroundColor = 'rgba(0,127,127,' + ( Math.random() * 0.5 + 0.25 ) + ')';
 
-				var symbol = document.createElement( 'div' );
-				symbol.className = 'symbol';
-				symbol.textContent = data.score;
-				element.appendChild( symbol );
+				if(data.niv==32){
+					var symbol = document.createElement( 'div' );
+					symbol.className = 'symbol';
+					symbol.textContent = data.titre;
+					element.appendChild( symbol );
+				}else{
+					var symbol = document.createElement( 'div' );
+					symbol.className = 'symbol';
+					symbol.textContent = data.score;
+					element.appendChild( symbol );
 
-				var details = document.createElement( 'div' );
-				details.className = 'details';
-				details.innerHTML = data.titre;
-				element.appendChild( details );
+					var details = document.createElement( 'div' );
+					details.className = 'details';
+					details.innerHTML = data.titre;
+					element.appendChild( details );
+				}
 
 				return element;				
 			}
