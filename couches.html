@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+		<title>3deleuze couches</title>
+		<style>
+			html, body {
+				height: 100%;
+			}
+
+			body {
+				background-color: #000000;
+				margin: 0;
+				font-family: Arial;
+				overflow: hidden;
+			}
+
+			#search {
+				position: absolute;
+				bottom: 30px;
+				width: 100%;
+				text-align: center;
+			}
+
+			#search input {
+				color: #ffffff;
+				background-color: transparent;
+				border: 1px solid #0080ff;
+				padding: 10px;
+				font-size: 20px;
+				text-transform: uppercase;
+				-webkit-border-radius: 0px; /* workaround for ios safari */
+			}
+
+			#search button {
+				color: #0080ff;
+				background-color: transparent;
+				border: 1px solid #0080ff;
+				padding: 10px;
+				font-size: 20px;
+				text-transform: uppercase;
+				cursor: pointer;
+			}
+		</style>
+	</head>
+	<body>
+		<script src="js/three.min.js"></script>
+
+		<script src="js/tween.min.js"></script>
+		<script src="js/CSS3DRenderer.js"></script>
+
+		<div id="container"></div>
+		<div id="search"><input id="query" type="text" value="cats"><button id="button">search</button></div>
+
+		<script>
+			var camera, scene, renderer;
+			var player;
+
+			var auto = true;
+
+			var Element = function ( entry ) {
+
+				var w = '960px';
+				var h = '720px';
+
+				var dom = document.createElement( 'div' );
+				dom.style.width = w;
+				dom.style.height = h;
+				dom.style.background = 'white';
+
+				//ajout de la page web
+				player = document.createElement( 'iframe' );
+				player.style.position = 'absolute';
+				player.style.width = w;
+				player.style.height = h;
+				player.style.border = '0px';
+				player.src = entry.url;
+				dom.appendChild( player );
+
+				var blocker = document.createElement( 'div' );
+				blocker.style.position = 'absolute';
+				blocker.style.width = w;
+				blocker.style.height = h;
+				blocker.style.background = 'rgba(0,0,0,0.5)';
+				blocker.style.cursor = 'pointer';
+				dom.appendChild( blocker );				
+
+				var object = new THREE.CSS3DObject( dom );
+				object.position.x = Math.random() * 4000 - 2000;
+				// object.position.y = Math.random() * 2000 - 1000;
+				object.position.y = 3000;
+				object.position.z = Math.random() * - 5000;
+
+				player.addEventListener( 'load', function ( event ) {
+
+					button.style.visibility = 'visible';
+
+					new TWEEN.Tween( object.position )
+						.to( { y: Math.random() * 2000 - 1000 }, 2000 )
+						.easing( TWEEN.Easing.Exponential.Out )
+						.start();
+
+				}, false );
+
+				dom.addEventListener( 'mouseover', function () {
+
+					button.style.WebkitFilter = '';
+					blocker.style.background = 'rgba(0,0,0,0)';
+
+				}, false );
+
+				dom.addEventListener( 'mouseout', function () {
+
+					button.style.WebkitFilter = 'grayscale()';
+					blocker.style.background = 'rgba(0,0,0,0.75)';
+
+				}, false );
+
+				dom.addEventListener( 'click', function ( event ) {
+
+					event.stopPropagation();
+
+					auto = false;
+
+					if ( player !== undefined ) {
+
+						player.parentNode.removeChild( player );
+						player = undefined;
+
+					}
+
+					//
+
+					var prev = object.position.z + 400;
+
+					new TWEEN.Tween( camera.position )
+						.to( { x: object.position.x, y: object.position.y - 25 }, 1500 )
+						.easing( TWEEN.Easing.Exponential.Out )
+						.start();
+
+					new TWEEN.Tween( { value: prev } )
+						.to( { value: 0  }, 2000 )
+						.onUpdate( function () {
+
+							move( this.value - prev );
+							prev = this.value;
+
+						} )
+						.easing( TWEEN.Easing.Exponential.Out )
+						.start();
+
+				}, false );
+
+				return object;
+
+			};
+
+			init();
+			animate();
+
+			function init() {
+
+				camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 1, 5000 );
+				camera.position.y = - 25;
+
+				scene = new THREE.Scene();
+
+				renderer = new THREE.CSS3DRenderer();
+				renderer.setSize( window.innerWidth, window.innerHeight );
+				renderer.domElement.style.position = 'absolute';
+				renderer.domElement.style.top = 0;
+				document.getElementById( 'container' ).appendChild( renderer.domElement );
+
+				//search( query.value );
+				showPageWeb();
+
+				document.body.addEventListener( 'mousewheel', onMouseWheel, false );
+
+				document.body.addEventListener( 'click', function ( event ) {
+
+					auto = true;
+
+					if ( player !== undefined ) {
+
+						player.parentNode.removeChild( player );
+						player = undefined;
+
+					}
+
+					new TWEEN.Tween( camera.position )
+							.to( { x: 0, y: - 25 }, 1500 )
+							.easing( TWEEN.Easing.Exponential.Out )
+							.start();
+
+				}, false );
+
+				window.addEventListener( 'resize', onWindowResize, false );
+
+			}
+
+			function search( query ) {
+
+				window.location.hash = query;
+
+				for ( var i = 0, l = scene.children.length; i < l; i ++ ) {
+
+					( function () {
+
+						var object = scene.children[ i ];
+						var delay = Math.random() * 100;
+
+						new TWEEN.Tween( object.position )
+							.to( { y: - 2000 }, 1000 )
+							.delay( delay )
+							.easing( TWEEN.Easing.Exponential.In )
+							.onComplete( function () {
+
+								scene.remove( object );
+
+							} )
+							.start();
+
+					} )();
+
+				}
+
+				var request = new XMLHttpRequest();
+				request.addEventListener( 'load', onData, false );
+				request.open( 'GET', 'https://gdata.youtube.com/feeds/api/videos?v=2&alt=json&max-results=50&q=' + query, true );
+				request.send( null );
+
+			}
+
+			function showPageWeb() {
+
+				var entries = [{url:'http://www.imdb.com/title/tt0063678/?ref_=nm_flmg_dr_13'}
+				,{url:'http://en.wikipedia.org/wiki/Deleuze'}
+				,{url:'http://www2.univ-paris8.fr/deleuze/article.php3?id_article=15'}
+				];
+
+				// console.log( entries );
+				for ( var i = 0; i < entries.length; i ++ ) {
+
+					var object = new Element( entries[i] );
+					scene.add( object );
+
+				}
+
+			}
+
+
+			function onData( event ) {
+
+				var data = JSON.parse( event.target.responseText );
+				var entries = data.feed.entry;
+
+				// console.log( entries );
+
+				for ( var i = 0; i < entries.length; i ++ ) {
+
+					var object = new Element( entries[ i ] );
+					scene.add( object );
+
+				}
+
+			}
+
+			function move( delta ) {
+
+				for ( var i = 0; i < scene.children.length; i ++ ) {
+
+					var object = scene.children[ i ];
+
+					object.position.z += delta;
+
+					if ( object.position.z > 0 ) {
+
+						object.position.z -= 5000;
+
+					} else if ( object.position.z < - 5000 ) {
+
+						object.position.z += 5000;
+
+					}
+
+				}
+
+			}
+
+			function onMouseWheel( event ) {
+
+				move( event.wheelDelta );
+
+			}
+
+			function onWindowResize() {
+
+				camera.aspect = window.innerWidth / window.innerHeight;
+				camera.updateProjectionMatrix();
+
+				renderer.setSize( window.innerWidth, window.innerHeight );
+
+			}
+
+			function animate() {
+
+				requestAnimationFrame( animate );
+
+				TWEEN.update();
+
+				if ( auto === true ) {
+
+					move( 1 );
+
+				}
+
+				renderer.render( scene, camera );
+
+			}
+
+		</script>
+	</body>
+</html>
