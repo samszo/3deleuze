@@ -131,6 +131,7 @@
 		</style>
 	</head>
 	<body>
+		<script src="js/jquery-1.9.1.js"></script>
 		<script src="js/three.min.js"></script>
 		<script src="js/tween.min.js"></script>
 		<script src="js/TrackballControls.js"></script>
@@ -174,7 +175,8 @@
 				var button = document.getElementById( 'button' );
 				button.addEventListener( 'click', function ( event ) {
 
-					search( query.value );
+					//search( query.value );
+					getRottenTomatoes(query.value);
 
 				}, false );
 
@@ -222,6 +224,17 @@
 
 			}
 
+			function getRottenTomatoes(query){
+				
+				var url = "rt.php"
+				var p = {"q":query};
+				$.get(url, p,
+						 function(data){
+					 		console.log(data);
+						 }, "json");
+				
+			}
+			
 			function onData( event ) {
 				var data3D = [];
 				var data = JSON.parse( event.target.responseText );
