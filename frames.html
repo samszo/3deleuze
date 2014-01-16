@@ -208,7 +208,8 @@
 			function searchDeleuze( query ) {
 
 				window.location.hash = query;
-				var url = 'http://localhost/jdc/public/deleuze/cherche?term=' + query;
+				//var url = 'http://localhost/jdc/public/deleuze/cherche?term=' + query;
+				var url = 'http://193.54.152.233/jdc/public/deleuze/cherche?term=' + query;
 				$.get(url,null, function (data) {
 					var data3D = [];
 					//construction des données à afficher
