@@ -244,20 +244,13 @@
 				var p = {"q":query};
 				//Résultat de la query RottenTomatoes et parsing JSON
 				$.get(url, p, function (result) {
-					//Pour chaque résultat
-					result.movies.forEach(function(movie, i) {
-						//Création du bloc de poster
-						var poster = document.createElement('div');
-						poster.className = 'blockMovie'; //Selon CSS Alexandre
-						
-						//Recupération de l'affiche du film
-						var img = document.createElement('img');
-						img.setAttribute('src', movie.posters.original);
-						img.setAttribute('alt', movie.title);
-						
-						//L'affiche dans le bloc
-						poster.appendChild(img);
+					var data3D = [];
+					result.movies.forEach(function(movie) {
+						var object = {titre:movie.title, poster:movie.posters.original};
+						data3D.push(object);
 					});
+					var grid = getTarget(data3D, 'movie');
+					transform(grid, 2000);
 				}, "json");
 			}
 			
@@ -291,6 +284,8 @@
 				transform(grid, 2000);
 			}
 
+			
+			
 			function getElement(data) {
 				var element = document.createElement( 'div' );
 				element.className = 'element';
@@ -309,33 +304,52 @@
 				return element;				
 			}
 			
+			getElementMovie(movie) {
+				//Création du bloc de poster
+				var poster = document.createElement('div');
+				poster.className = 'blockMovie'; //Selon CSS Alexandre
+				
+				//Recupération de l'affiche du film
+				var img = document.createElement('img');
+				img.setAttribute('src', movie.poster);
+				img.setAttribute('alt', movie.titre);
+				//L'affiche dans le bloc
+				poster.appendChild(img);
+			}
+			
 			function getTarget(data, type) {
-
 				var grid = [];
 
 				// on affiche les élement dans des grilles parallèles
-				for ( var i = 0; i < data.length; i ++) {
-
-					var element = getElement(data[i], type);
-					
-					var object = new THREE.CSS3DObject( element );
-					object.position.x = Math.random() * 4000 - 2000;
-					object.position.y = Math.random() * 4000 - 2000;
-					object.position.z = Math.random() * 4000 - 2000;
-					scene.add( object );
-
-					objects.push( object );
-
-					var object = new THREE.Object3D();
-					object.position.x = ( ( i % 5 ) * 400 ) - 800;
-					object.position.y = ( - ( Math.floor( i / 5 ) % 5 ) * 400 ) + 800;
-					object.position.z = ( Math.floor( i / 25 ) ) * 1000 - 2000;
-
-					grid.push( object );
-
+				if (type == 'movie') {
+					data.forEach (function(object) {
+						var element = getElementMovie(object);
+						position3D(element);
+						grid.push( object );
+					});				
 				}
-
+				else if (type == 'deleuze') {
+					//Instructions pour Deleuze
+				}
+				else if (type == 'wiki') {
+					//Instructions pour Wiki
+				}
 				return grid;				
+			}
+			
+			function position3D(element) {
+				var object = new THREE.CSS3DObject( element );
+				object.position.x = Math.random() * 4000 - 2000;
+				object.position.y = Math.random() * 4000 - 2000;
+				object.position.z = Math.random() * 4000 - 2000;
+				scene.add( object );
+				objects.push( object );
+
+				var object = new THREE.Object3D();
+				object.position.x = ( ( i % 5 ) * 400 ) - 800;
+				object.position.y = ( - ( Math.floor( i / 5 ) % 5 ) * 400 ) + 800;
+				object.position.z = ( Math.floor( i / 25 ) ) * 1000 - 2000;
+				return object;
 			}
 			
 			function transform( targets, duration ) {
