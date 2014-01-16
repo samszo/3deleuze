@@ -142,6 +142,7 @@
 
 		<script>
 
+			var urlWiktio = "http://wiktionary.dbpedia.org/sparql?default-graph-uri=&query=SELECT+distinct+*%0D%0AFROM+%3Chttp%3A%2F%2Fwiktionary.dbpedia.org%3E+%0D%0AWHERE+%7B%0D%0A++%3Flexword+%3Chttp%3A%2F%2Fwww.w3.org%2F2000%2F01%2Frdf-schema%23label%3E+%22trip%22%40en+.%0D%0A++%3Flexword+%3Chttp%3A%2F%2Fwww.monnet-project.eu%2Flemon%23sense%3E+%3Fsense+.++%0D%0A++%3Fsense+%3Chttp%3A%2F%2Fwiktionary.dbpedia.org%2Fterms%2FhasMeaning%3E+%3Fmeaning%0D%0A%7D%0D%0A&format=text%2Fhtml&timeout=0&debug=on";
 			var camera, scene, renderer;
 			var controls;
 
@@ -283,6 +284,7 @@
 				return element;				
 			}
 
+			
 			function getTarget(data, type) {
 
 				var grid = [];
