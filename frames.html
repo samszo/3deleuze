@@ -128,6 +128,20 @@
 				cursor: pointer;
 			}
 			
+			.blockMovie {
+	
+				width: 300px;
+				margin: 20px;
+
+				border-radius: 2px;	
+				
+				border-right:2px solid #007375;
+				border-bottom:2px solid #007375;
+			}
+
+			.blockMovie>img	{
+				width: 100%;
+			}
 		</style>
 	</head>
 	<body>
@@ -142,7 +156,6 @@
 
 		<script>
 
-			var urlWiktio = "http://wiktionary.dbpedia.org/sparql?default-graph-uri=&query=SELECT+distinct+*%0D%0AFROM+%3Chttp%3A%2F%2Fwiktionary.dbpedia.org%3E+%0D%0AWHERE+%7B%0D%0A++%3Flexword+%3Chttp%3A%2F%2Fwww.w3.org%2F2000%2F01%2Frdf-schema%23label%3E+%22trip%22%40en+.%0D%0A++%3Flexword+%3Chttp%3A%2F%2Fwww.monnet-project.eu%2Flemon%23sense%3E+%3Fsense+.++%0D%0A++%3Fsense+%3Chttp%3A%2F%2Fwiktionary.dbpedia.org%2Fterms%2FhasMeaning%3E+%3Fmeaning%0D%0A%7D%0D%0A&format=text%2Fhtml&timeout=0&debug=on";
 			var camera, scene, renderer;
 			var controls;
 
@@ -188,7 +201,7 @@
 				}
 
 				window.addEventListener( 'resize', onWindowResize, false );
-				search( query.value );
+//				search( query.value );
 				
 			}
 
@@ -229,11 +242,23 @@
 				
 				var url = "rt.php"
 				var p = {"q":query};
-				$.get(url, p,
-						 function(data){
-					 		console.log(data);
-						 }, "json");
-				
+				//Résultat de la query RottenTomatoes et parsing JSON
+				$.get(url, p, function (result) {
+					//Pour chaque résultat
+					result.movies.forEach(function(movie, i) {
+						//Création du bloc de poster
+						var poster = document.createElement('div');
+						poster.className = 'blockMovie'; //Selon CSS Alexandre
+						
+						//Recupération de l'affiche du film
+						var img = document.createElement('img');
+						img.setAttribute('src', movie.posters.original);
+						img.setAttribute('alt', movie.title);
+						
+						//L'affiche dans le bloc
+						poster.appendChild(img);
+					});
+				}, "json");
 			}
 			
 			function onData( event ) {
@@ -283,7 +308,6 @@
 
 				return element;				
 			}
-
 			
 			function getTarget(data, type) {
 
