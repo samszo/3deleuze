@@ -304,7 +304,7 @@
 				return element;				
 			}
 			
-			getElementMovie(movie) {
+			function getElementMovie(movie) {
 				//Création du bloc de poster
 				var poster = document.createElement('div');
 				poster.className = 'blockMovie'; //Selon CSS Alexandre
@@ -315,6 +315,7 @@
 				img.setAttribute('alt', movie.titre);
 				//L'affiche dans le bloc
 				poster.appendChild(img);
+				return poster;
 			}
 			
 			function getTarget(data, type) {
@@ -322,14 +323,19 @@
 
 				// on affiche les élement dans des grilles parallèles
 				if (type == 'movie') {
-					data.forEach (function(object) {
+					data.forEach (function(object, i) {
 						var element = getElementMovie(object);
-						position3D(element);
-						grid.push( object );
+						var obj = position3D(element, i);
+						grid.push(obj);
 					});				
 				}
 				else if (type == 'deleuze') {
 					//Instructions pour Deleuze
+					data.forEach (function(object, i) {
+						var element = getElement(object);
+						var obj = position3D(element, i);
+						grid.push(obj);
+					});
 				}
 				else if (type == 'wiki') {
 					//Instructions pour Wiki
@@ -337,7 +343,7 @@
 				return grid;				
 			}
 			
-			function position3D(element) {
+			function position3D(element, i) {
 				var object = new THREE.CSS3DObject( element );
 				object.position.x = Math.random() * 4000 - 2000;
 				object.position.y = Math.random() * 4000 - 2000;
