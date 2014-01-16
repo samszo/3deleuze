@@ -189,8 +189,8 @@
 				var button = document.getElementById( 'button' );
 				button.addEventListener( 'click', function ( event ) {
 
-					//search( query.value );
-					getRottenTomatoes(query.value);
+					search( query.value );
+					//getRottenTomatoes(query.value);
 
 				}, false );
 
@@ -258,7 +258,7 @@
 				var data3D = [];
 				var data = JSON.parse( event.target.responseText );
 				//construction des données à afficher
-				var col = 1, lig = 1, idRub=data[0].id_rubrique, nbArt=0;  
+				var niv=1, idRub=-1, nbArt=0;  
 				for ( var i = 0; i < data.length; i ++ ) {
 					/*les résultats s'affichent dans une grille
 					niveau 1 = rubrique
@@ -267,20 +267,23 @@
 					*/
 					var d = data[i];
 					if(idRub!=d.id_rubrique){
-						//on ajoute l'objet correspondant à la rubrique
-						var object = {titre:d.rubTitre, score:nbArt, col:col, lig:lig, id:d.id_rubrique};
-						data3D.push(object);
-						if(i%10==0){
-							lig ++;
-							col = 1;
-						}else{
-							col ++;
-						}
 						idRub=d.id_rubrique;
+						nbArt ++;
+						nbArt=0;
+						//on ajoute l'objet correspondant à la rubrique
+						var object = {titre:d.rubTitre, score:nbArt, niv:30, id:d.id_rubrique};
+						data3D.push(object);
 					}
-					nbArt ++;
+					//on ajoute l'objet correspondant à l'article
+					var object = {titre:d.titre, score:d.score, niv:31, id:d.id_article};
+					data3D.push(object);
+					//on ajoute l'objet correspondant à la citation
+					d.phrases.forEach(function(p) {
+						var object = {titre:p.deb+p.mot+p.fin, niv:32, id:d.id_article+d.p};
+						data3D.push(object);					
+					});
 				}
-				var grid = getTarget(data3D);
+				var grid = getTarget(data3D, "deleuze");
 				transform(grid, 2000);
 			}
 
