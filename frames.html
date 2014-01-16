@@ -189,7 +189,7 @@
 				var button = document.getElementById( 'button' );
 				button.addEventListener( 'click', function ( event ) {
 
-					search( query.value );
+					searchDeleuze( query.value );
 					//getRottenTomatoes(query.value);
 
 				}, false );
@@ -205,10 +205,45 @@
 				
 			}
 
-			function search( query ) {
+			function searchDeleuze( query ) {
 
 				window.location.hash = query;
+				var url = 'http://localhost/jdc/public/deleuze/cherche?term=' + query;
+				$.get(url,null, function (data) {
+					var data3D = [];
+					//construction des données à afficher
+					var niv=1, idRub=-1, nbArt=0;  
+					for ( var i = 0; i < data.length; i ++ ) {
+						/*les résultats s'affichent dans une grille
+						niveau 1 = rubrique
+						niveau 2 = article
+						niveau 3 = phrase
+						*/
+						var d = data[i];
+						if(idRub!=d.id_rubrique){
+							idRub=d.id_rubrique;
+							nbArt ++;
+							nbArt=0;
+							//on ajoute l'objet correspondant à la rubrique
+							var object = {titre:d.rubTitre, score:nbArt, niv:30, id:d.id_rubrique};
+							data3D.push(object);
+						}
+						//on ajoute l'objet correspondant à l'article
+						var object = {titre:d.titre, score:d.score, niv:31, id:d.id_article};
+						data3D.push(object);
+						//on ajoute l'objet correspondant à la citation
+						d.phrases.forEach(function(p) {
+							var object = {titre:p.deb+p.mot+p.fin, niv:32, id:d.id_article+d.p};
+							data3D.push(object);					
+						});
+					}
+					var grid = getTarget(data3D, "deleuze");
+					transform(grid, 2000);
+				}, "json");
+				
+			}
 
+			function clearSeen(){
 				for ( var i = 0, l = scene.children.length; i < l; i ++ ) {
 
 					( function () {
@@ -230,14 +265,9 @@
 					} )();
 
 				}
-
-				var request = new XMLHttpRequest();
-				request.addEventListener( 'load', onData, false );
-				request.open( 'GET', 'http://localhost/jdc/public/deleuze/cherche?term=' + query, true );
-				request.send( null );
-
+				
 			}
-
+			
 			function getRottenTomatoes(query){
 				
 				var url = "rt.php"
@@ -254,42 +284,7 @@
 				}, "json");
 			}
 			
-			function onData( event ) {
-				var data3D = [];
-				var data = JSON.parse( event.target.responseText );
-				//construction des données à afficher
-				var niv=1, idRub=-1, nbArt=0;  
-				for ( var i = 0; i < data.length; i ++ ) {
-					/*les résultats s'affichent dans une grille
-					niveau 1 = rubrique
-					niveau 2 = article
-					niveau 3 = phrase
-					*/
-					var d = data[i];
-					if(idRub!=d.id_rubrique){
-						idRub=d.id_rubrique;
-						nbArt ++;
-						nbArt=0;
-						//on ajoute l'objet correspondant à la rubrique
-						var object = {titre:d.rubTitre, score:nbArt, niv:30, id:d.id_rubrique};
-						data3D.push(object);
-					}
-					//on ajoute l'objet correspondant à l'article
-					var object = {titre:d.titre, score:d.score, niv:31, id:d.id_article};
-					data3D.push(object);
-					//on ajoute l'objet correspondant à la citation
-					d.phrases.forEach(function(p) {
-						var object = {titre:p.deb+p.mot+p.fin, niv:32, id:d.id_article+d.p};
-						data3D.push(object);					
-					});
-				}
-				var grid = getTarget(data3D, "deleuze");
-				transform(grid, 2000);
-			}
-
-			
-			
-			function getElement(data) {
+			function getElementDeleuze(data) {
 				var element = document.createElement( 'div' );
 				element.className = 'element';
 				element.style.backgroundColor = 'rgba(0,127,127,' + ( Math.random() * 0.5 + 0.25 ) + ')';
@@ -307,7 +302,7 @@
 				return element;				
 			}
 			
-			getElementMovie(movie) {
+			function getElementMovie(movie) {
 				//Création du bloc de poster
 				var poster = document.createElement('div');
 				poster.className = 'blockMovie'; //Selon CSS Alexandre
@@ -325,14 +320,19 @@
 
 				// on affiche les élement dans des grilles parallèles
 				if (type == 'movie') {
-					data.forEach (function(object) {
+					data.forEach (function(object, i) {
 						var element = getElementMovie(object);
-						position3D(element);
-						grid.push( object );
+						var obj = position3D(element, i);
+						grid.push(obj);
 					});				
 				}
 				else if (type == 'deleuze') {
 					//Instructions pour Deleuze
+					data.forEach (function(object, i) {
+						var element = getElementDeleuze(object);
+						var obj = position3D(element, i);
+						grid.push(obj);
+					});				
 				}
 				else if (type == 'wiki') {
 					//Instructions pour Wiki
@@ -340,7 +340,7 @@
 				return grid;				
 			}
 			
-			function position3D(element) {
+			function position3D(element, i) {
 				var object = new THREE.CSS3DObject( element );
 				object.position.x = Math.random() * 4000 - 2000;
 				object.position.y = Math.random() * 4000 - 2000;
