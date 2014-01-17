@@ -15,51 +15,6 @@ html, body {
 				overflow: hidden;
 			}
 
-			a {
-				color: #ffffff;
-			}
-
-			.element {
-				width: 300px;
-				height: 300px;
-				box-shadow: 0px 0px 12px rgba(0,255,255,0.5);
-				border: 1px solid rgba(127,255,255,0.25);
-				text-align: center;
-				cursor: default;
-			}
-
-			.element:hover {
-				box-shadow: 0px 0px 12px rgba(0,255,255,0.75);
-				border: 1px solid rgba(127,255,255,0.75);
-			}
-
-				.element .number {
-					position: absolute;
-					top: 20px;
-					right: 20px;
-					font-size: 12px;
-					color: rgba(127,255,255,0.75);
-				}
-
-				.element .symbol {
-					position: absolute;
-					top: 40px;
-					left: 0px;
-					right: 0px;
-					font-size: 60px;
-					font-weight: bold;
-					color: rgba(255,255,255,0.75);
-					text-shadow: 0 0 10px rgba(0,255,255,0.95);
-				}
-
-				.element .details {
-					position: absolute;
-					bottom: 15px;
-					left: 0px;
-					right: 0px;
-					font-size: 12px;
-					color: rgba(127,255,255,0.75);
-				}
 
 			button {
 				color: rgba(127,255,255,0.75);
@@ -111,17 +66,25 @@ html, body {
 .blockMovie{
 	
 	width: 300px;
+	height: 400px;
 	margin: 20px;
 
 	border-radius: 2px;	
 	
-	border-right:2px solid #007375;
-	border-bottom:2px solid #007375;
+	border:2px solid #007375;
+
+	padding:10px;
+	color: rgba(255,255,255,0.5);
+	text-shadow: 0 0 10px rgba(0,255,255,0.95);
+	text-align:center;
+	vertical-align:middle;
+	line-height:400px;
+	overflow:hidden;
 }
 
 .blockMovie>img
 {
-	width: 100%;
+	width: 90%;
 }
 
 .blockWiki
@@ -149,10 +112,40 @@ html, body {
 	line-height: 150%;
 }
 
-.blockDeleuze
+.blockDeleuzeCite
 {
 	height:100px;
 	width: 150px;
+	margin: 20px;
+	padding: 10px;
+
+	background-color: rgba(0,161,171,0.5);
+	border-radius: 2px;	
+
+	text-align: left;
+	font-family: sans-serif;
+	overflow:auto;
+}
+
+.blockDeleuzeCours
+{
+	height:1000px;
+	width: 1000px;
+	margin: 20px;
+	padding: 10px;
+
+	background-color: rgba(0,161,171,0.5);
+	border-radius: 2px;	
+
+	text-align: left;
+	font-family: sans-serif;
+	overflow:auto;
+}
+
+.blockDeleuzeSeance
+{
+	height:500px;
+	width: 500px;
 	margin: 20px;
 	padding: 10px;
 
@@ -179,4 +172,124 @@ html, body {
 	font-style:normal;
 	font-size: 10px;
 	text-shadow: 0 0 10px rgba(0,255,255,0.95);
+}
+
+@charset "utf-8";
+/* CSS Document */
+
+#wrapper {
+	width: 800px;
+	height: 600px;
+	padding-bottom: 1%;
+	padding-left: 1%;
+	padding-right: 1%;
+	padding-top: 20px;
+	margin: auto;
+}
+
+#Deleuze {
+	height:2em;
+}
+
+#logo{
+	max-height:1em;
+	width:auto;
+	text-align:center;
+	padding-left: 7em;
+	
+}
+
+#navigation{
+	margin-left:50px;
+}
+
+ul {
+ padding-top: 80px;
+ padding-left: 230px;
+ margin:0;
+ list-style-type:none;
+ }
+ 
+li {
+ margin-left:1em;
+ float:left;
+ }
+
+ #content{
+
+ 	margin-top: 80px;
+ 	margin-left: auto;
+ 	margin-right: auto;
+ 	font-family: sans-serif;
+ 	width: 77%;
+	height: 60%;
+	text-align: justify;
+
+ }
+
+#beta{
+	position: absolute;
+	margin-left: 610px;
+	margin-top: 27px;
+	font-family: sans-serif;
+	font-style: italic;
+
+
+
+} 
+
+.lightbox {
+
+    position:fixed;
+
+    top:0;
+
+    left:0;
+
+    width:100%;
+
+    height:100%;
+
+    background:rgba(0, 0, 0, .8);
+
+}
+
+
+
+.lightbox_table {
+
+    width:100%;
+
+    height:100%;
+
+}
+
+
+
+.lightbox_table_cell {
+
+    vertical-align:middle;
+
+}
+
+#chrome{
+	margin-left: 240px;
+	margin-top: 40px;
+	
+	
+}
+
+#paris8{
+	margin-left: 10px;
+	margin-top: -75px;
+
+}
+
+
+#credit{
+	float: right;
+	margin-top: -50px;
+	margin-right: 30px;
+	color:black;
+
 }
