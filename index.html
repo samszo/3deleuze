@@ -26,29 +26,29 @@
 
 			var objects = [];
 			var targets = [];
-			var isTransform = false;
-			var nivMovie=1000, nivCours=600, nivSeance=500, nivCite=400;
 			//récupère les valeurs de la css
-			var hCours = getStyleRuleValue('height', '.blockDeleuzeCours');
-			hCours = parseInt(hCours.substr(0, hCours.length-2))+800;
-			var wCours = getStyleRuleValue('width', '.blockDeleuzeCours');
-			wCours = parseInt(wCours.substr(0, wCours.length-2))+800;
-			var hSeance = getStyleRuleValue('height', '.blockDeleuzeSeance');
-			hSeance = parseInt(hSeance.substr(0, hSeance.length-2))+40;
-			var wSeance = getStyleRuleValue('width', '.blockDeleuzeSeance');
-			wSeance = parseInt(wSeance.substr(0, wSeance.length-2))+40;
-			var hCite = getStyleRuleValue('height', '.blockDeleuzeCite');
-			hCite = parseInt(hCite.substr(0, hCite.length-2))+20;
-			var wCite = getStyleRuleValue('width', '.blockDeleuzeCite');
-			wCite = parseInt(wCite.substr(0, wCite.length-2))+20;
-
+			var niv = {cours:{mod:6, z:600, h:getTailleCss('.blockDeleuzeCours', 'height')+30, w:getTailleCss('.blockDeleuzeCours', 'width')+30}
+					,seance:{mod:6, z:500, h:getTailleCss('.blockDeleuzeSeance', 'height')+20, w:getTailleCss('.blockDeleuzeSeance', 'width')+20}
+					,cite:{mod:6, z:400, h:getTailleCss('.blockDeleuzeCite', 'height')+10, w:getTailleCss('.blockDeleuzeCite', 'width')+10}
+					,movie:{mod:6, z:1000}
+					,wiki:{mod:6, z:800}
+					};
+			niv.seance.mod =  Math.floor(niv.cours.w/niv.seance.w);
+			niv.cite.mod =  Math.floor(niv.seance.w/niv.cite.w);
+			console.log(niv);
 			init();
 			animate();
 
+			function getTailleCss(cls, prop){
+				var css = getStyleRuleValue(prop, cls);
+				css = parseInt(css.substr(0, css.length-2));
+				return css;
+			}
+
 			function init() {
 
-				camera = new THREE.PerspectiveCamera( 40, window.innerWidth / window.innerHeight, 1, 1000 );
-				camera.position.z = 13000;
+				camera = new THREE.PerspectiveCamera(80, window.innerWidth / window.innerHeight, 1, 100000 );
+				camera.position.z = 15000;
 
 				scene = new THREE.Scene();
 
@@ -71,16 +71,17 @@
 				document.addEventListener('keydown', function(e) {
 					if (e.	keyCode === 13) {
 						clearSeen();
-						searchDeleuze(query.value);
+						getDeleuze(query.value);
+						getDbPedia(query.value);
 						getRottenTomatoes(query.value);
 						e.preventDefault();
 					}
 				}, false);
 				button.addEventListener( 'click', function ( event ) {
 					clearSeen();
-					searchDeleuze(query.value);
+					getDeleuze(query.value);
+					getDbPedia(query.value);
 					getRottenTomatoes(query.value);
-
 				}, false );
 
 				if ( window.location.hash.length > 0 ) {
@@ -95,7 +96,7 @@
 				
 			}
 
-			function searchDeleuze(query) {
+			function getDeleuze(query) {
 
 				//window.location.hash = query;
 				//var url = 'http://localhost/jdc/public/deleuze/cherche?term=' + query;
@@ -103,20 +104,21 @@
 				$.get(url,null, function (data) {
 					var data3D = [];
 					//construction des données à afficher
-					var niv=1, idRub=-1, nbRub=0, nbArt=0, rX, rY, aX, aY, cX, cY;
-					for ( var i = 0; i < data.length; i ++ ) {
+					var idRub=-1, nbRub=0, nbArt=0, rX, rY, aX, aY, cX, cY;	
+					data.forEach(function(d) {				
+					//for ( var i = 0; i < data.length; i ++ ) {
 						/*les résultats s'affichent dans une grille
 						niveau 1 = rubrique
 						niveau 2 = article
 						niveau 3 = phrase
 						*/
-						var d = data[i];
+						//var d = data[i];
 						if(idRub!=d.id_rubrique){
 							//calcul les coordonnées du cours
-							rX = ( ( nbRub % 6) * hCours) - wCours + 6;
-							rY = ( - ( Math.floor( nbRub / 6) % 6) * hCours) + wCours + 6;							
+							rX = ( ( nbRub % niv.cours.mod) * niv.cours.w*1.5) + 1;
+							rY = ( - ( Math.floor( nbRub / niv.cours.mod) % niv.cours.mod) * niv.cours.h*1.5) + 1;							
 							//on ajoute l'objet correspondant à la rubrique
-							var object = {titre:d.rubTitre, score:nbArt, niv:nivCours, id:d.id_rubrique, x:rX, y:rY, niv:nivCours};
+							var object = {titre:d.rubTitre, score:nbArt, niv:niv.cours.z, id:d.id_rubrique, x:rX, y:rY, niv:niv.cours.z};
 							data3D.push(object);
 							nbRub++;
 							idRub=d.id_rubrique;
@@ -124,19 +126,22 @@
 						}
 						//on ajoute l'objet correspondant à l'article
 						//calcul les coordonnées du cours
-						var mod = Math.floor(wCours/wSeance);
-						aX = rX + ( ( nbArt % mod) * hSeance) - wSeance;
-						aY = rY + ( - ( Math.floor( nbArt / mod) % mod) * hSeance) + wSeance;							
-						var object = {titre:d.titre+"<br/>"+d.rubTitre, score:d.score, niv:nivSeance, id:d.id_article, fichier:d.fichier, type:d.id_type, x:aX, y:aY};
-						console.log(object);
+						aX = rX + ( ( nbArt % niv.seance.mod) * niv.seance.w * 1.5);
+						aY = rY + ( - ( Math.floor( nbArt / niv.seance.mod) % niv.seance.mod) * niv.seance.h *1.5);							
+						var object = {titre:d.titre, score:d.score, niv:niv.seance.z, id:d.id_article, fichier:d.fichier, type:d.id_type, x:aX, y:aY};
+						//console.log(object);
 						data3D.push(object);
 						//on ajoute l'objet correspondant à la citation
+						var nbCite = 0;
 						d.phrases.forEach(function(p) {
-							var object = {detail:'«'+p.deb+" "+p.mot+" "+p.fin+'...»', niv:nivCite, id:d.id_article+d.p, h:hCite, w:wCite};
-							data3D.push(object);					
+							cX = aX + ( ( nbCite % niv.cite.mod) * niv.cite.w *1.5);
+							cY = aY + ( - ( Math.floor( nbCite / niv.cite.mod) % niv.cite.mod) * niv.cite.h * 1.5);							
+							var object = {detail:'«'+p.deb+" "+p.mot+" "+p.fin+'...»', niv:niv.cite.z, id:d.id_article+d.p, x:cX, y:cY};
+							data3D.push(object);
+							nbCite++;					
 						});
 						nbArt ++;
-					}
+					});
 					getTarget(data3D, "deleuze");
 					transform(2000);
 				}, "json");
@@ -171,18 +176,55 @@
 					}
 				}, "json");
 			}
+
+			function getDbPedia(query){
+
+				query = query.substr(0,1).toUpperCase()+query.substr(1);
+				
+				var urlDbPedia = "http://fr.dbpedia.org/sparql?default-graph-uri=&query=select+distinct+*+where+%7B%3Chttp%3A%2F%2Ffr.dbpedia.org%2Fresource%2F"+query+"%3E+%3Fr+%3Fp%7D&format=application%2Fsparql-results%2Bjson&timeout=0&debug=on";
+				$.get(urlDbPedia,null,
+					function(data){
+						data.results.bindings.forEach(function(d){
+							var tabDbPedia = [];
+							var value = d.p.value;
+							var valueSplite = value.split("/");
+							var compteur = 0 ;
+							if ((valueSplite[2]=="fr.dbpedia.org")&&(valueSplite[4].indexOf(":")<=0)&&(compteur<20)){
+								tabDbPedia.push(valueSplite[4]);
+								compteur ++;
+							}	
+							getTarget(tabDbPedia, 'wiki');
+						});
+						
+					}, "json");
+			}
+
+			function getElementWiki(movie) {
+				//Création du bloc mot
+				var mot = document.createElement('div');
+				mot.className = '.blockWiki'; //Selon CSS Alexandre
+				
+				//Récupération du mot et création du lien
+				var lien = "http://fr.wikipedia.org/wiki/"+mot;
+				
+				//L'affiche dans le bloc
+				mot.appendChild(lien);
+				
+				return mot;
+			}
+			
 			
 			function getElementDeleuze(data) {
 				var element = document.createElement( 'div' );
 
-				if(data.niv==nivCite){
+				if(data.niv==niv.cite.z){
 					element.className = 'blockDeleuzeCite';
 					var cite = document.createElement( 'cite' );
 					cite.textContent = data.detail;
 					element.appendChild(cite);
-				}else if(data.niv==nivSeance){
+				}else if(data.niv==niv.seance.z){
 					element.className = 'blockDeleuzeSeance';
-					var titre = document.createElement( 'h1' );
+					var titre = document.createElement( 'h2' );
 					titre.innerHTML = data.titre;
 					element.appendChild(titre);
 					if(data.fichier && data.type==13){
@@ -222,10 +264,6 @@
 				}
 				return poster;
 			}
-
-			function getElementWiki(movie) {
-				
-			}
 			
 			function getTarget(data, type) {
 				// on affiche les élement dans des grilles parallèles
@@ -246,7 +284,7 @@
 					//Instructions pour Wiki
 					data.forEach (function(d, i) {
 						var element = getElementWiki(d);
-						position3D(element, i, {niv:d.niv, w:300, h:400});
+						position3D(element, i, {niv:nivWiki, w:300, h:400});
 					});				
 				}
 			}
@@ -266,8 +304,8 @@
 				if(d.x && d.y){
 					object.position.x = d.x;
 					object.position.y = d.y;
-					console.log(d);
-					console.log(object.position.z);
+					//console.log(d);
+					//console.log(object.position.z);
 				}else{
 					object.position.x = ( ( i % 10) * d.h ) - d.w;
 					object.position.y = ( - ( Math.floor( i / 10) % 10) * d.h ) + d.w ;

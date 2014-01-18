@@ -112,25 +112,10 @@ html, body {
 	line-height: 150%;
 }
 
-.blockDeleuzeCite
-{
-	height:100px;
-	width: 150px;
-	margin: 20px;
-	padding: 10px;
-
-	background-color: rgba(0,161,171,0.5);
-	border-radius: 2px;	
-
-	text-align: left;
-	font-family: sans-serif;
-	overflow:auto;
-}
-
 .blockDeleuzeCours
 {
-	height:1000px;
-	width: 1000px;
+	height:800px;
+	width: 2000px;
 	margin: 20px;
 	padding: 10px;
 
@@ -144,8 +129,8 @@ html, body {
 
 .blockDeleuzeSeance
 {
-	height:500px;
-	width: 500px;
+	height:300px;
+	width: 600px;
 	margin: 20px;
 	padding: 10px;
 
@@ -157,14 +142,39 @@ html, body {
 	overflow:auto;
 }
 
-.blockDeleuze>h1
+.blockDeleuzeCite
+{
+	height:120px;
+	width: 300px;
+	margin: 20px;
+	padding: 10px;
+
+	background-color: rgba(0,161,171,0.5);
+	border-radius: 2px;	
+
+	text-align: left;
+	font-family: sans-serif;
+	overflow:auto;
+}
+
+.blockDeleuzeCours>h1
 {
 	font-weight: bold;
-	font-size:14px;
+	font-size:128px;
 	line-height: 150%;
 	text-shadow: 0 0 10px rgba(0,255,255,0.95);
 	
 }
+
+.blockDeleuzeSeance>h2
+{
+	font-weight: bold;
+	font-size:64px;
+	line-height: 150%;
+	text-shadow: 0 0 10px rgba(0,255,255,0.95);
+	
+}
+
 
 .blockDeleuze>cite
 {
