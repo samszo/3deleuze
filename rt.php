@@ -5,7 +5,7 @@
 
 	if(isset($_GET["q"])){
 		$query=$_GET["q"];
-		$apikey = '';
+		$apikey = '52aaqumfpwnqyaq786ncyydy';
 		$q = urlencode($query); // make sure to url encode an query parameters
 		
 		// construct the query with our apikey and the query we want to make

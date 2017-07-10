@@ -72,7 +72,7 @@
 					if (e.	keyCode === 13) {
 						clearSeen();
 						getDeleuze(query.value);
-						getDbPedia(query.value);
+						//getDbPedia(query.value);
 						getRottenTomatoes(query.value);
 						e.preventDefault();
 					}
@@ -80,7 +80,7 @@
 				button.addEventListener( 'click', function ( event ) {
 					clearSeen();
 					getDeleuze(query.value);
-					getDbPedia(query.value);
+					//getDbPedia(query.value);
 					getRottenTomatoes(query.value);
 				}, false );
 
@@ -99,8 +99,8 @@
 			function getDeleuze(query) {
 
 				//window.location.hash = query;
-				//var url = 'http://localhost/jdc/public/deleuze/cherche?term=' + query;
-				var url = 'http://193.54.152.233/jdc/public/deleuze/cherche?term=' + query;
+				var url = 'http://localhost/jdc/public/deleuze/cherche?term=' + query;
+				//var url = 'http://193.54.152.233/jdc/public/deleuze/cherche?term=' + query;
 				$.get(url,null, function (data) {
 					var data3D = [];
 					//construction des données à afficher
@@ -168,7 +168,7 @@
 					var data3D = [];
 					if(result.movies){
 						result.movies.forEach(function(movie) {
-							var object = {titre:movie.title, poster:movie.posters.original, niv:nivMovie};
+							var object = {titre:movie.title, poster:movie.posters.original, niv:niv.movie.z};
 							data3D.push(object);
 						});
 						getTarget(data3D, 'movie');
